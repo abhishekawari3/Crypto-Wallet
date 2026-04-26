@@ -3,6 +3,7 @@ export const TOKEN_SECRET = process.env.TOKEN_SECRET || "dev-secret-change-this-
 export const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const CLIENT_ORIGINS = new Set([
   process.env.CLIENT_ORIGIN,
+  "https://crypto-wallet-six-mu.vercel.app",
 ].filter(Boolean));
 
 export const ASSETS = {
