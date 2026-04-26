@@ -1,5 +1,29 @@
 # React + Vite
 
+## Deploy to Vercel
+
+This app is ready to deploy from the `client/Wallet` folder.
+
+1. Push the repository to GitHub.
+2. Import the project in Vercel.
+3. Set **Root Directory** to `client/Wallet`.
+4. Keep the framework preset as **Vite**.
+5. Add these environment variables in Vercel:
+
+```bash
+TOKEN_SECRET=use-a-long-random-secret
+CLIENT_ORIGIN=https://your-vercel-app.vercel.app
+```
+
+The frontend uses same-origin `/api` routes on Vercel. The local backend WebSocket is replaced by polling `/api/prices` in production because Vercel serverless functions do not host long-running WebSocket servers.
+
+For local development, run both commands in separate terminals:
+
+```bash
+npm run server
+npm run dev
+```
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

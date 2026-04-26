@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Activity, WifiOff } from "lucide-react";
+import { API_URL } from "../api";
 
 const COINS = [
   { id: "bitcoin", symbol: "BTC", name: "Bitcoin" },
@@ -12,6 +13,22 @@ const currency = new Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 2,
 });
+
+function applyPriceUpdates(current, updates = []) {
+  return current.map((coin) => {
+    const update = updates.find((item) => item.id === coin.id);
+    if (!update) return coin;
+
+    const nextHistory = typeof update.price === "number" ? [...coin.history, update.price].slice(-40) : coin.history;
+    return {
+      ...coin,
+      price: update.price,
+      change24h: update.change24h,
+      updatedAt: update.updatedAt,
+      history: nextHistory,
+    };
+  });
+}
 
 function Sparkline({ points = [] }) {
   const path = useMemo(() => {
@@ -52,10 +69,34 @@ export default function MarketPanel() {
   useEffect(() => {
     let socket;
     let retryTimer;
+    let pollTimer;
     let closedByEffect = false;
+    const wsUrl = import.meta.env.VITE_PRICE_WS_URL || (import.meta.env.DEV ? "ws://localhost:8787/prices" : "");
+
+    const pollPrices = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/prices`);
+        if (!response.ok) throw new Error("Price request failed");
+
+        const payload = await response.json();
+        setPrices((current) => applyPriceUpdates(current, payload.data));
+        setStatus("live");
+      } catch {
+        setStatus("offline");
+      }
+    };
+
+    if (!wsUrl) {
+      pollPrices();
+      pollTimer = window.setInterval(pollPrices, 15000);
+      return () => {
+        closedByEffect = true;
+        window.clearInterval(pollTimer);
+      };
+    }
 
     const connect = () => {
-      socket = new WebSocket(import.meta.env.VITE_PRICE_WS_URL || "ws://localhost:8787/prices");
+      socket = new WebSocket(wsUrl);
 
       socket.addEventListener("open", () => setStatus("connected"));
       socket.addEventListener("close", () => {
@@ -73,21 +114,7 @@ export default function MarketPanel() {
         }
 
         if (payload.type === "snapshot" || payload.type === "prices") {
-          setPrices((current) =>
-            current.map((coin) => {
-              const update = payload.data.find((item) => item.id === coin.id);
-              if (!update) return coin;
-
-              const nextHistory = [...coin.history, update.price].slice(-40);
-              return {
-                ...coin,
-                price: update.price,
-                change24h: update.change24h,
-                updatedAt: update.updatedAt,
-                history: nextHistory,
-              };
-            })
-          );
+          setPrices((current) => applyPriceUpdates(current, payload.data));
         }
       });
     };
@@ -97,6 +124,7 @@ export default function MarketPanel() {
     return () => {
       closedByEffect = true;
       window.clearTimeout(retryTimer);
+      window.clearInterval(pollTimer);
       socket?.close();
     };
   }, []);
@@ -144,7 +172,7 @@ export default function MarketPanel() {
               <Sparkline points={coin.history} />
             </div>
             <p className="mt-3 text-xs text-[var(--muted)]">
-              {coin.updatedAt ? `Updated ${new Date(coin.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Start the backend server to stream prices"}
+              {coin.updatedAt ? `Updated ${new Date(coin.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : "Waiting for market data"}
             </p>
           </article>
         ))}

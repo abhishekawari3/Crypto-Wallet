@@ -69,7 +69,7 @@ function scheduleReconnect() {
   reconnectTimer = setTimeout(connectPriceStream, 3000);
 }
 
-async function refreshPricesFromRest() {
+export async function refreshPricesFromRest() {
   try {
     const symbols = encodeURIComponent(JSON.stringify(Object.keys(ASSETS)));
     const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${symbols}`);

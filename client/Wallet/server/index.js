@@ -23,7 +23,7 @@ const server = createServer(async (req, res) => {
 
     if (await handleAuthRoutes(req, res, url.pathname)) return;
     if (await handleWalletRoutes(req, res, url.pathname)) return;
-    if (handlePriceRoutes(req, res, url.pathname)) return;
+    if (await handlePriceRoutes(req, res, url.pathname)) return;
 
     sendJson(res, 404, { error: "Route not found" });
   } catch (error) {
