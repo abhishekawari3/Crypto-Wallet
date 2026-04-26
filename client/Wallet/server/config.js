@@ -3,8 +3,6 @@ export const TOKEN_SECRET = process.env.TOKEN_SECRET || "dev-secret-change-this-
 export const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const CLIENT_ORIGINS = new Set([
   process.env.CLIENT_ORIGIN,
-  "http://127.0.0.1:5173",
-  "http://localhost:5173",
 ].filter(Boolean));
 
 export const ASSETS = {
