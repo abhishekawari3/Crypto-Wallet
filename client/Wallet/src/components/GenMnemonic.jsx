@@ -1,10 +1,11 @@
 import { generateMnemonic, validateMnemonic } from "bip39";
 import { Copy, KeyRound, Plus, ShieldAlert, Upload } from "lucide-react";
-import { useState } from "react";
-import { EthWallet } from "./EthWallet";
+import { Suspense, lazy, useState } from "react";
 import MarketPanel from "./MarketPanel";
 import Navbar from "./navbar";
-import { SolanaWallet } from "./SolanaWallet";
+
+const LazyEthWallet = lazy(() => import("./EthWallet").then((module) => ({ default: module.EthWallet })));
+const LazySolanaWallet = lazy(() => import("./SolanaWallet").then((module) => ({ default: module.SolanaWallet })));
 
 const GenMnemonic = ({ isSolana }) => {
   const [mnemonic, setMnemonic] = useState([]);
@@ -122,11 +123,13 @@ const GenMnemonic = ({ isSolana }) => {
 
         <section className="min-w-0">
           {mnemonic.length > 0 ? (
-            isSolana ? (
-              <SolanaWallet mnemonic={mnemonic.join(" ")} />
-            ) : (
-              <EthWallet mnemonic={mnemonic.join(" ")} />
-            )
+            <Suspense fallback={<div className="min-h-[380px] rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8" />}>
+              {isSolana ? (
+                <LazySolanaWallet mnemonic={mnemonic.join(" ")} />
+              ) : (
+                <LazyEthWallet mnemonic={mnemonic.join(" ")} />
+              )}
+            </Suspense>
           ) : (
             <div className="grid min-h-[380px] place-items-center rounded-2xl border border-dashed border-[var(--border)] bg-[var(--panel)] p-8 text-center">
               <div>
