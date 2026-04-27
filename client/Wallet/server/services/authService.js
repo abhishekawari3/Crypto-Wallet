@@ -1,11 +1,11 @@
 import crypto from "node:crypto";
 import { TOKEN_SECRET, TOKEN_TTL_MS } from "../config.js";
-import { readUsers, writeUsers } from "../storage/users.js";
+import { createUser as insertUser, findUserByEmail, findUserById as findUserByIdFromDb } from "../storage/users.js";
 
 export async function createUser({ name, email, password }) {
-  const users = await readUsers();
+  const existing = await findUserByEmail(email);
 
-  if (users.some((user) => user.email === email)) {
+  if (existing) {
     const error = new Error("Account already exists");
     error.status = 409;
     throw error;
@@ -16,18 +16,14 @@ export async function createUser({ name, email, password }) {
     name,
     email,
     password: hashPassword(password),
-    wallets: [],
     createdAt: new Date().toISOString(),
   };
 
-  users.push(user);
-  await writeUsers(users);
-  return user;
+  return insertUser(user);
 }
 
 export async function authenticateUser(email, password) {
-  const users = await readUsers();
-  const user = users.find((item) => item.email === email);
+  const user = await findUserByEmail(email);
 
   if (!user || !verifyPassword(password, user.password)) {
     const error = new Error("Invalid email or password");
@@ -39,8 +35,7 @@ export async function authenticateUser(email, password) {
 }
 
 export async function findUserById(id) {
-  const users = await readUsers();
-  return users.find((user) => user.id === id) || null;
+  return findUserByIdFromDb(id);
 }
 
 export function publicUser(user) {
