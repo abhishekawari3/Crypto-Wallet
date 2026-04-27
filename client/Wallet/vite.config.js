@@ -17,7 +17,6 @@ export default defineConfig({
             if (id.includes('@solana/web3.js')) return 'vendor-solana'
             if (id.includes('bip39') || id.includes('ed25519-hd-key') || id.includes('tweetnacl') || id.includes('bs58')) return 'vendor-crypto'
             if (id.includes('lucide-react')) return 'vendor-icons'
-            if (id.includes('react-router-dom')) return 'vendor-router'
             return 'vendor'
           }
         },
