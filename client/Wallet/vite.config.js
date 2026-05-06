@@ -5,7 +5,19 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), nodePolyfills()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    nodePolyfills({
+      include: ['buffer', 'process'],
+      globals: {
+        Buffer: true,
+        process: true,
+        global: false,
+      },
+      protocolImports: false,
+    }),
+  ],
   build: {
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
@@ -15,7 +27,7 @@ export default defineConfig({
             if (id.includes('three')) return 'vendor-three'
             if (id.includes('ethers')) return 'vendor-ethers'
             if (id.includes('@solana/web3.js')) return 'vendor-solana'
-            if (id.includes('bip39') || id.includes('ed25519-hd-key') || id.includes('tweetnacl') || id.includes('bs58')) return 'vendor-crypto'
+            if (id.includes('bip39') || id.includes('tweetnacl') || id.includes('bs58')) return 'vendor-crypto'
             if (id.includes('lucide-react')) return 'vendor-icons'
             return 'vendor'
           }

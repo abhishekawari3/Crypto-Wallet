@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { mnemonicToSeed } from "bip39";
 import { Keypair } from "@solana/web3.js";
-import { derivePath } from "ed25519-hd-key";
 import { Copy, Eye, EyeOff, Plus } from "lucide-react";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { apiRequest } from "../api";
+import { deriveEd25519Path } from "../crypto/ed25519Derive";
 import TransactionPanel from "./TransactionPanel";
 
 const mask = "****************";
@@ -43,7 +43,7 @@ export function SolanaWallet({ mnemonic }) {
     setStatus("Saving wallet...");
     const seed = await mnemonicToSeed(mnemonic);
     const path = `m/44'/501'/${currentIndex}'/0'`;
-    const derivedSeed = derivePath(path, seed.toString("hex")).key;
+    const { key: derivedSeed } = await deriveEd25519Path(path, seed);
     const keypair = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
 
     try {
