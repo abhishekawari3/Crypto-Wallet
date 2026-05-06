@@ -2,15 +2,27 @@ export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "
 const TOKEN_KEY = "nexa-token";
 
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function setToken(token) {
-  localStorage.setItem(TOKEN_KEY, token);
+  try {
+    localStorage.setItem(TOKEN_KEY, token);
+  } catch {
+    // Auth still updates in memory; persistence is best effort.
+  }
 }
 
 export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    // Nothing to clear when storage is unavailable.
+  }
 }
 
 export async function apiRequest(path, options = {}) {
@@ -24,7 +36,14 @@ export async function apiRequest(path, options = {}) {
     },
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data = {};
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { error: "Server returned an invalid response" };
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Request failed");

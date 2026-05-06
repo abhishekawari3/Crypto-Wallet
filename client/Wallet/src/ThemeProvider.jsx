@@ -2,10 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { ThemeContext } from "./theme-context";
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem("nexa-theme") || "dark");
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("nexa-theme") || "dark";
+    } catch {
+      return "dark";
+    }
+  });
 
   useEffect(() => {
-    localStorage.setItem("nexa-theme", theme);
+    try {
+      localStorage.setItem("nexa-theme", theme);
+    } catch {
+      // Theme persistence is optional when storage is blocked.
+    }
   }, [theme]);
 
   const value = useMemo(
