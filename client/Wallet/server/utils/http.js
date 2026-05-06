@@ -1,14 +1,3 @@
-import { CLIENT_ORIGINS } from "../config.js";
-
-export function setCorsHeaders(req, res) {
-  const origin = req.headers.origin;
-  const isAllowedVercelPreview = origin && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
-  res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGINS.has(origin) || isAllowedVercelPreview ? origin : "http://127.0.0.1:5173");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  res.setHeader("Vary", "Origin");
-}
-
 export function sendJson(res, status, payload) {
   res.writeHead(status, { "Content-Type": "application/json" });
   res.end(JSON.stringify(payload));

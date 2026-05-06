@@ -1,17 +1,9 @@
 import { handleAuthRoutes } from "./routes/authRoutes.js";
 import { handlePriceRoutes } from "./routes/priceRoutes.js";
 import { handleWalletRoutes } from "./routes/walletRoutes.js";
-import { sendJson, setCorsHeaders } from "./utils/http.js";
+import { sendJson } from "./utils/http.js";
 
 export async function handleRequest(req, res) {
-  setCorsHeaders(req, res);
-
-  if (req.method === "OPTIONS") {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
   try {
     const url = new URL(req.url || "/", getRequestOrigin(req));
 
