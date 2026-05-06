@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { ethers } from "ethers";
 import { Copy, Download, RefreshCw, Send } from "lucide-react";
-import bs58 from "bs58";
+import { decodeBase58 } from "../crypto/base58";
 
 const ETH_RPC_URL = import.meta.env.VITE_ETH_RPC_URL || "https://rpc.ankr.com/eth_sepolia";
 const SOL_RPC_URL = import.meta.env.VITE_SOL_RPC_URL || "https://api.devnet.solana.com";
@@ -25,6 +24,7 @@ export default function TransactionPanel({ chain, address, privateKey }) {
         const value = await provider.getBalance(address);
         setBalance(`${Number(ethers.formatEther(value)).toFixed(6)} ETH`);
       } else {
+        const { Connection, PublicKey } = await import("@solana/web3.js");
         const connection = new Connection(SOL_RPC_URL, "confirmed");
         const value = await connection.getBalance(new PublicKey(address));
         setBalance(`${(value / 1e9).toFixed(6)} SOL`);
@@ -60,8 +60,9 @@ export default function TransactionPanel({ chain, address, privateKey }) {
         setStatus("Transaction sent. Waiting for confirmation...");
         await tx.wait();
       } else {
+        const { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } = await import("@solana/web3.js");
         const connection = new Connection(SOL_RPC_URL, "confirmed");
-        const sender = Keypair.fromSecretKey(bs58.decode(privateKey));
+        const sender = Keypair.fromSecretKey(decodeBase58(privateKey));
         const tx = new Transaction().add(
           SystemProgram.transfer({
             fromPubkey: sender.publicKey,

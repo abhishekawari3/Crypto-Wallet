@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { mnemonicToSeed } from "bip39";
-import { Keypair } from "@solana/web3.js";
 import { Copy, Eye, EyeOff, Plus } from "lucide-react";
 import nacl from "tweetnacl";
-import bs58 from "bs58";
 import { apiRequest } from "../api";
+import { encodeBase58 } from "../crypto/base58";
+import { mnemonicToSeed } from "../crypto/bip39";
 import { deriveEd25519Path } from "../crypto/ed25519Derive";
 import TransactionPanel from "./TransactionPanel";
 
@@ -44,7 +43,7 @@ export function SolanaWallet({ mnemonic }) {
     const seed = await mnemonicToSeed(mnemonic);
     const path = `m/44'/501'/${currentIndex}'/0'`;
     const { key: derivedSeed } = await deriveEd25519Path(path, seed);
-    const keypair = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
+    const keypair = nacl.sign.keyPair.fromSeed(derivedSeed);
 
     try {
       const result = await apiRequest("/api/wallets", {
@@ -52,8 +51,8 @@ export function SolanaWallet({ mnemonic }) {
         body: JSON.stringify({
           chain: "solana",
           index: currentIndex,
-          publicKey: keypair.publicKey.toBase58(),
-          privateKey: bs58.encode(keypair.secretKey),
+          publicKey: encodeBase58(keypair.publicKey),
+          privateKey: encodeBase58(keypair.secretKey),
         }),
       });
 

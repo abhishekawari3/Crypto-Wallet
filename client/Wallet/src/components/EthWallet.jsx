@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { mnemonicToSeed } from "bip39";
 import { HDNodeWallet, Wallet } from "ethers";
 import { Copy, Eye, EyeOff, Plus } from "lucide-react";
 import { apiRequest } from "../api";
+import { mnemonicToSeed } from "../crypto/bip39";
 import TransactionPanel from "./TransactionPanel";
 
 const mask = "****************";

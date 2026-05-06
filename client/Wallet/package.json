@@ -15,10 +15,10 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@noble/hashes": "^1.8.0",
     "@solana/web3.js": "^1.98.4",
     "@tailwindcss/vite": "^4.1.12",
     "bip39": "^3.1.0",
-    "bs58": "^6.0.0",
     "ethers": "^6.15.0",
     "lucide-react": "^0.542.0",
     "mongodb": "^5.8.0",
@@ -28,7 +28,6 @@
     "tailwindcss": "^4.1.12",
     "three": "^0.184.0",
     "tweetnacl": "^1.0.3",
-    "vite-plugin-node-polyfills": "^0.24.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

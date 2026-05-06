@@ -1,6 +1,6 @@
-import { generateMnemonic, validateMnemonic } from "bip39";
 import { Copy, KeyRound, Plus, ShieldAlert, Upload } from "lucide-react";
 import { Suspense, lazy, useState } from "react";
+import { generateMnemonic, validateMnemonic } from "../crypto/bip39";
 import MarketPanel from "./MarketPanel";
 import Navbar from "./navbar";
 
