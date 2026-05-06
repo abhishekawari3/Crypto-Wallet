@@ -1,14 +1,39 @@
-import { MongoClient } from "mongodb";
-
-const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
+const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "nexa_wallet";
-const client = new MongoClient(uri, { maxPoolSize: 10 });
+let clientPromise;
+let collectionsPromise;
 
-await client.connect();
-const db = client.db(dbName);
+export function hasMongoConfig() {
+  return Boolean(uri);
+}
 
-export const users = db.collection("users");
-export const wallets = db.collection("wallets");
+export async function getCollections() {
+  if (!uri) return null;
+  if (!collectionsPromise) {
+    collectionsPromise = connect();
+  }
 
-await users.createIndex({ email: 1 }, { unique: true });
-await wallets.createIndex({ userId: 1, chain: 1, walletIndex: 1 });
+  return collectionsPromise;
+}
+
+async function connect() {
+  if (!clientPromise) {
+    const { MongoClient } = await import("mongodb");
+    const client = new MongoClient(uri, { maxPoolSize: 10 });
+    clientPromise = client.connect();
+  }
+
+  const client = await clientPromise;
+  const db = client.db(dbName);
+  const users = db.collection("users");
+  const wallets = db.collection("wallets");
+
+  await Promise.all([
+    users.createIndex({ email: 1 }, { unique: true }),
+    wallets.createIndex({ userId: 1, chain: 1, walletIndex: 1 }),
+    wallets.createIndex({ userId: 1, chain: 1, address: 1 }),
+    wallets.createIndex({ userId: 1, chain: 1, publicKey: 1 }),
+  ]);
+
+  return { users, wallets };
+}

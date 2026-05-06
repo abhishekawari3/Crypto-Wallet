@@ -21,7 +21,7 @@ export function addPriceClient(client) {
 export function startPriceService() {
   connectPriceStream();
   refreshPricesFromRest();
-  setInterval(refreshPricesFromRest, 15000);
+  setInterval(refreshPricesFromRest, 15000).unref?.();
 }
 
 export function marketSnapshot() {
@@ -29,6 +29,8 @@ export function marketSnapshot() {
 }
 
 function connectPriceStream() {
+  if (process.env.DISABLE_PRICE_WS === "true") return;
+
   clearTimeout(reconnectTimer);
   const streams = "btcusdt@ticker/ethusdt@ticker/solusdt@ticker";
   upstream = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
@@ -38,7 +40,12 @@ function connectPriceStream() {
   });
 
   upstream.on("message", (message) => {
-    const payload = JSON.parse(message.toString());
+    let payload;
+    try {
+      payload = JSON.parse(message.toString());
+    } catch {
+      return;
+    }
     const ticker = payload.data;
     const meta = ASSETS[ticker?.s];
 

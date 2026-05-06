@@ -73,21 +73,25 @@ export function signToken(payload) {
 }
 
 export function verifyToken(token) {
-  if (!token) return null;
+  try {
+    if (!token) return null;
 
-  const [encoded, signature] = token.split(".");
-  if (!encoded || !signature) return null;
+    const [encoded, signature] = token.split(".");
+    if (!encoded || !signature) return null;
 
-  const expected = crypto.createHmac("sha256", TOKEN_SECRET).update(encoded).digest("base64url");
-  const signatureBuffer = Buffer.from(signature);
-  const expectedBuffer = Buffer.from(expected);
+    const expected = crypto.createHmac("sha256", TOKEN_SECRET).update(encoded).digest("base64url");
+    const signatureBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expected);
 
-  if (signatureBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) {
+    if (signatureBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) {
+      return null;
+    }
+
+    const payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8"));
+    return payload.exp > Date.now() ? payload : null;
+  } catch {
     return null;
   }
-
-  const payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf8"));
-  return payload.exp > Date.now() ? payload : null;
 }
 
 export function getBearerToken(req) {
