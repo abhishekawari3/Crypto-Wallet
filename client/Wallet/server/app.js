@@ -1,10 +1,15 @@
 import { handleAuthRoutes } from "./routes/authRoutes.js";
 import { handlePriceRoutes } from "./routes/priceRoutes.js";
 import { handleWalletRoutes } from "./routes/walletRoutes.js";
-import { sendJson } from "./utils/http.js";
+import { sendJson, sendNoContent } from "./utils/http.js";
 
 export async function handleRequest(req, res) {
   try {
+    if (req.method === "OPTIONS") {
+      sendNoContent(res);
+      return;
+    }
+
     const url = new URL(req.url || "/", getRequestOrigin(req));
 
     if (await handleAuthRoutes(req, res, url.pathname)) return;
@@ -14,7 +19,9 @@ export async function handleRequest(req, res) {
     sendJson(res, 404, { error: "Route not found" });
   } catch (error) {
     console.error(error);
-    sendJson(res, error.status || 500, { error: error.message || "Server error" });
+    const status = error.status || 500;
+    const message = status >= 500 ? "Server error" : error.message;
+    sendJson(res, status, { error: message || "Server error" });
   }
 }
 

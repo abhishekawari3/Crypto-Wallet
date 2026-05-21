@@ -14,7 +14,7 @@ const App = () => {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <Suspense fallback={<div className="min-h-screen grid place-items-center text-sm text-[var(--muted)]">Loading…</div>}>
+          <Suspense fallback={<div className="min-h-screen grid place-items-center text-sm text-[var(--muted)]">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Navigate to="/user/sign_in" replace />} />
               <Route path="/user/sign_in" element={<Form isSigninPage={true} />} />

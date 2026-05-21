@@ -1,4 +1,4 @@
-# React + Vite
+# NexaWallet
 
 ## Deploy to Vercel
 
@@ -11,11 +11,13 @@ This app is ready to deploy from the `client/Wallet` folder.
 5. Add these environment variables in Vercel:
 
 ```bash
-TOKEN_SECRET=use-a-long-random-secret
+TOKEN_SECRET=use-a-long-random-secret-with-at-least-32-characters
 CLIENT_ORIGIN=https://your-vercel-app.vercel.app
 MONGODB_URI=mongodb+srv://...
 MONGODB_DB=nexa_wallet
 ```
+
+Use a `TOKEN_SECRET` with at least 32 random characters. Deployed builds fail fast without it so auth tokens and encrypted wallet records are not created with a development secret.
 
 The frontend uses same-origin `/api` routes on Vercel. The backend connects to MongoDB lazily, so serverless cold starts do not crash the app. Use MongoDB Atlas or another hosted MongoDB database for deployed auth and wallet persistence. Local development can run without MongoDB and will store data in `server/data/nexa-wallet.json`.
 
@@ -27,14 +29,3 @@ For local development, run both commands in separate terminals:
 npm run server
 npm run dev
 ```
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
