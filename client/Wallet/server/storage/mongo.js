@@ -1,4 +1,6 @@
-const uri = process.env.MONGODB_URI;
+import { MONGODB_URI } from "../config.js";
+
+const uri = MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "nexa_wallet";
 let clientPromise;
 let collectionsPromise;

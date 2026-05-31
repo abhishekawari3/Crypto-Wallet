@@ -3,6 +3,7 @@ export const IS_PRODUCTION = process.env.NODE_ENV === "production" || Boolean(pr
 export const TOKEN_SECRET = readTokenSecret();
 export const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "";
+export const MONGODB_URI = readMongoUri();
 export const MAX_BODY_BYTES = Number(process.env.MAX_BODY_BYTES || 1024 * 1024);
 
 export const ASSETS = {
@@ -19,4 +20,14 @@ function readTokenSecret() {
   }
 
   return secret || "dev-secret-change-this-before-production";
+}
+
+function readMongoUri() {
+  const uri = process.env.MONGODB_URI || "";
+
+  if (IS_PRODUCTION && !uri) {
+    throw new Error("MONGODB_URI must be set in production");
+  }
+
+  return uri;
 }
