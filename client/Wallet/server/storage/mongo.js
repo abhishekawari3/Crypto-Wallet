@@ -5,10 +5,6 @@ const dbName = process.env.MONGODB_DB || "nexa_wallet";
 let clientPromise;
 let collectionsPromise;
 
-export function hasMongoConfig() {
-  return Boolean(uri);
-}
-
 export async function getCollections() {
   if (!uri) return null;
   if (!collectionsPromise) {

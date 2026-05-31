@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../useAuth";
-import NexaScene from "./NexaScene";
 
 const Form = ({ isSigninPage = false }) => {
   const navigate = useNavigate();
@@ -36,20 +35,16 @@ const Form = ({ isSigninPage = false }) => {
 
   return (
     <div className="min-h-screen bg-[var(--app-bg)] px-4 py-8">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1fr_0.85fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[0.9fr_1fr]">
         <section className="hidden min-w-0 lg:block">
           <p className="text-sm font-semibold text-[var(--muted)]">NexaWallet</p>
           <h1 className="mt-2 max-w-xl text-4xl font-bold leading-tight text-[var(--text)]">
             Your wallets, keys, and live market view in one place.
           </h1>
-          <div className="mt-8">
-            <NexaScene />
-          </div>
+          <p className="mt-4 max-w-lg text-sm leading-6 text-[var(--muted)]">
+            Demo testnet wallet dashboard for creating accounts, checking balances, and following market prices.
+          </p>
         </section>
-
-      <div className="lg:hidden">
-        <NexaScene compact />
-      </div>
 
       <form onSubmit={submit} className="mx-auto w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6">
         <p className="text-sm font-semibold text-[var(--muted)]">NexaWallet</p>

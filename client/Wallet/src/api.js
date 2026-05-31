@@ -1,28 +1,16 @@
 export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "" : "http://localhost:8787");
-const TOKEN_KEY = "nexa-token";
+let authToken = null;
 
 export function getToken() {
-  try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
+  return authToken;
 }
 
 export function setToken(token) {
-  try {
-    localStorage.setItem(TOKEN_KEY, token);
-  } catch {
-    // Auth still updates in memory; persistence is best effort.
-  }
+  authToken = token;
 }
 
 export function clearToken() {
-  try {
-    localStorage.removeItem(TOKEN_KEY);
-  } catch {
-    // Nothing to clear when storage is unavailable.
-  }
+  authToken = null;
 }
 
 export async function apiRequest(path, options = {}) {

@@ -1,11 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Download, Repeat2, Send, WalletCards } from "lucide-react";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "../api";
 import MarketPanel from "./MarketPanel";
 import Navbar from "./navbar";
-
-const NexaScene = lazy(() => import("./NexaScene"));
 
 const quickActions = [
   { label: "Send", icon: <Send size={19} /> },
@@ -98,11 +96,6 @@ const Home = () => {
         </section>
 
         <section className="min-w-0">
-          <div className="mb-5 overflow-hidden">
-            <Suspense fallback={<div className="h-72 w-full rounded-2xl border border-[var(--border)] bg-[var(--panel-soft)]" /> }>
-              <NexaScene />
-            </Suspense>
-          </div>
           <MarketPanel />
         </section>
       </main>

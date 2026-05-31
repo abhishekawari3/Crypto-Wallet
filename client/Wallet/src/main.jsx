@@ -7,15 +7,11 @@ import AppErrorBoundary from './AppErrorBoundary.jsx'
 window.addEventListener('vite:preloadError', (event) => {
   event.preventDefault()
 
-  const reloadKey = 'nexa-preload-reload'
-  try {
-    if (sessionStorage.getItem(reloadKey) === 'done') return
+  const url = new URL(window.location.href)
+  if (url.searchParams.has('nexaPreloadReload')) return
 
-    sessionStorage.setItem(reloadKey, 'done')
-  } catch {
-    // Continue with a single reload attempt even if storage is blocked.
-  }
-  window.location.reload()
+  url.searchParams.set('nexaPreloadReload', '1')
+  window.location.replace(url.toString())
 })
 
 createRoot(document.getElementById('root')).render(
