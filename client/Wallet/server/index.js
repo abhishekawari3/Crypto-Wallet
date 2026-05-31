@@ -1,10 +1,8 @@
 import { createServer } from "node:http";
-import ws from "ws";
+import { WebSocketServer } from "ws";
 import { PORT } from "./config.js";
 import { handleRequest } from "./app.js";
 import { addPriceClient, startPriceService } from "./services/priceService.js";
-
-const WebSocketServer = ws.Server;
 
 const server = createServer(handleRequest);
 

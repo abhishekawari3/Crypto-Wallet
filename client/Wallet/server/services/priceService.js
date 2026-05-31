@@ -1,7 +1,5 @@
-import ws from "ws";
+import WebSocket from "ws";
 import { ASSETS } from "../config.js";
-
-const WebSocket = ws;
 
 const clients = new Set();
 const prices = new Map();
